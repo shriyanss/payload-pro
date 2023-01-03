@@ -4,6 +4,8 @@
 </div>
 Javascript payload for exploiting blind XSS. You can simply host `payload.js` file editing the specifications for an ultimate XSS.
 
+***Pro-tip: You can star and watch this repository for upadtes to this :)***
+
 # Features
 It has some basic features like it can retrieve
 - Cookies
