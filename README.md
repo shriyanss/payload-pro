@@ -25,3 +25,9 @@ More infomation can be found on README file
 
 # Deploying
 You can use Pipedream to create workflows. Information can be found [here](https://github.com/shriyanss/payload-pro/blob/main/webhook.md)
+
+# :)
+Feel free to follow me
+- Twitter: [@ss0x00](https://twitter.com/ss0x00)
+- Linkedin: [@Shriyans Sudhi](https://www.linkedin.com/in/shriyans-s-a62826216/)
+- Medium: [@shriyanssudhi](https://shriyanssudhi.medium.com)
