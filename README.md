@@ -1,4 +1,5 @@
 # Payload Pro
+![](https://raw.githubusercontent.com/shriyanss/payload-pro/main/logo.png)
 Javascript payload for exploiting blind XSS. You can simply host `payload.js` file editing the specifications for an ultimate XSS.
 
 # Features
